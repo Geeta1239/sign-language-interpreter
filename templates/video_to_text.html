@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Video to Text</title>
+</head>
+
+<body>
+    <h2>Upload Sign Language Video</h2>
+    <input type="file" id="videoInput">
+    <button onclick="uploadVideo()">Convert</button>
+    <p id="outputText"></p>
+
+    <script>
+        function uploadVideo() {
+            let fileInput = document.getElementById("videoInput").files[0];
+            let formData = new FormData();
+            formData.append("video", fileInput);
+
+            fetch("../backend/video_to_text.py", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("outputText").innerText = data.text;
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+
+</html>

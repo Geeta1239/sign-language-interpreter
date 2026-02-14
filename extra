@@ -1,0 +1,241 @@
+// text_to_sign.html
+
+// {% comment %} <script>
+//         function convertToSign() {
+//             let text = document.getElementById("textInput").value;
+//             fetch("http://127.0.0.1:5000/text_to_sign", {  // ✅Correct URL for Flask
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify({ text: text })
+//             })
+//                 .then(response => {
+//                     if (!response.ok) {
+//                         throw new Error("Sign video not found");
+//                     }
+//                     return response.blob();
+//                 })
+//                 .then(blob => {
+//                     let videoUrl = URL.createObjectURL(blob);
+//                     document.getElementById("signVideo").src = videoUrl;
+//                 })
+//                 .catch(error => {
+//                     console.error("Error:", error);
+//                     alert("Sign language video not found. Please try another word.");
+//                 });
+//         }
+
+//         function shareVideo() {
+//             let videoUrl = document.getElementById("signVideo").src;
+//             navigator.share({ title: "Sign Language Video", url: videoUrl })
+//                 .catch(error => console.error("Error sharing:", error));
+//         }
+//     </script> {% endcomment %}
+
+
+
+
+<button id="helpBtn">❓</button>
+
+
+
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Interpreter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+
+<body>
+    <nav>
+        <h1>Sign Language Interpreter</h1>
+        <button id="chat-support">💬 Chat</button>
+        <side>
+            <button id="theme-toggle">🌙</button>
+            <a href="logout.php" class="logout">Logout</a>
+        </side>
+    </nav>
+
+    <div class="container">
+        <h2>Welcome, <span id="username">User</span> 👋</h2>
+        
+        <!-- Start sign_to_text.py when clicked -->
+        <div class="card" onclick="window.location.href='/start_sign_to_text'">
+            <h2>Sign Language to Text/Speech</h2>
+            <p>Use your camera to convert sign language into text or speech.</p>
+        </div>
+
+        <!-- Start text_to_sign.py when clicked -->
+        <div class="card" onclick="window.location.href='/start_text_to_sign'">
+            <h2>Text/Speech to AI Avatar</h2>
+            <p>Enter text or speak, and an AI avatar will perform sign language.</p>
+        </div>
+    </div>
+</body>
+
+</html> {% endcomment %}
+
+
+
+
+<!-- dashboard.html -->
+{% comment %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Interpreter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+
+<body>
+    <nav>
+        <h1>Sign Language Interpreter</h1>
+    </nav>
+
+    <div class="container">
+        <h2>Welcome, <span id="username">User</span> 👋</h2>
+
+        <!-- Corrected Links to Flask Routes -->
+        <div class="card" onclick="window.location.href='{{ url_for('sign_to_text') }}'">
+            <h2>Sign Language to Text/Speech</h2>
+            <p>Use your camera to convert sign language into text or speech.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='{{ url_for('text_to_sign') }}'">
+            <h2>Text/Speech to AI Avatar</h2>
+            <p>Enter text or speak, and an AI avatar will perform sign language.</p>
+        </div>
+    </div>
+</body>
+
+</html> {% endcomment %}
+
+
+
+<!-- theme logic -->
+{% comment %} // Theme Toggle Logic
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+
+// Load saved theme from localStorage
+if (localStorage.getItem('theme') === 'dark') {
+body.classList.add('dark-mode');
+themeToggle.innerText = "🌙 Light Mode";
+} else {
+themeToggle.innerText = "🌞 Dark Mode";
+}
+
+themeToggle.addEventListener('click', () => {
+body.classList.toggle('dark-mode');
+const isDarkMode = body.classList.contains('dark-mode');
+localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+themeToggle.innerText = isDarkMode ? "🌙 Light Mode" : "🌞 Dark Mode";
+}); {% endcomment %}
+
+
+{% comment %}
+
+
+
+<!-- sign_to_text.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign to Text/Speech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+
+<body>
+    <nav>
+        <h1>Sign Language to Text/Speech</h1>
+        <br>
+        <a href="{{ url_for('dashboard') }}" class="back">Back</a>
+    </nav>
+
+    <div class="container">
+        <div class="video-container">
+            <h2>Live Camera</h2>
+            <img id="video_feed" src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+
+        <div class="text-container">
+            <h2>Recognized Text</h2>
+            <p id="recognized_text">Waiting for signs...</p>
+            <button onclick="clearText()">Clear Text</button>
+            <button id="speakBtn">🔊 Speak</button>
+
+            <div id="feedback">
+                <button id="thumbsUp">👍</button>
+                <button id="thumbsDown">👎</button>
+            </div>
+
+
+        </div>
+    </div>
+
+    <script>
+        function clearText() {
+            document.getElementById("recognized_text").innerText = "Waiting for signs...";
+            fetch('/clear_text', { method: 'POST' });
+        }
+
+        function updateText() {
+            fetch('/get_text')
+                .then(response => {
+                    if (!response.ok) {
+                        console.error("❌ Server responded with:", response.status);
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log("📢 Received text from backend:", text); // Debugging
+                    let textElement = document.getElementById('recognized_text');
+                    if (textElement) {
+                        if (text.startsWith("<!DOCTYPE html>")) {  // ❌ Detect if response is HTML (error case)
+                            console.error("⚠️ Error: Received HTML instead of plain text!");
+                            textElement.innerText = "Error fetching text!";
+                        } else {
+                            textElement.innerText = text.trim() || "Waiting for signs...";
+                        }
+                    } else {
+                        console.error("❌ Element with ID 'recognized_text' not found!");
+                    }
+                })
+                .catch(error => console.error('⚠️ Error fetching text:', error));
+        }
+
+        setInterval(updateText, 3000); // Update every 3 seconds
+
+        document.getElementById("speakBtn").addEventListener("click", function () {
+            let text = document.getElementById("recognized_text").innerText;
+            let speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        });
+
+        document.getElementById("thumbsUp").addEventListener("click", function () {
+            alert("Thank you for the feedback! 👍");
+        });
+
+        document.getElementById("thumbsDown").addEventListener("click", function () {
+            alert("We'll improve our recognition! 👎");
+        });
+
+
+    </script>
+</body>
+
+</html> {% endcomment %}

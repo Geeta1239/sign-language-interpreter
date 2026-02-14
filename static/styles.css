@@ -1,0 +1,535 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --primary-color: #0077b6;
+    --secondary-color: #023e8a;
+    --background-color: #f0f4f8;
+    --card-bg: #ffffff;
+    --text-color: #1e1e1e;
+    --hover-color: #0096c7;
+    --shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;  /* Centers vertically */
+    height: 100vh;  /* Full screen height */
+}
+
+/* Navbar */
+nav {
+    background: var(--secondary-color);
+    color: #fff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+nav h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+nav .logout, nav .back {
+    text-decoration: none;
+    color: #fff;
+    padding: 8px 16px;
+    background: var(--primary-color);
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
+}
+
+nav .logout:hover, nav .back:hover {
+    background: var(--hover-color);
+}
+
+/* Main Container */
+/* .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    width: 100%;
+    max-width: 200px; /* Keep it compact */
+    /* flex-wrap: wrap; */
+    /* gap: 20px; */
+/* }  */
+
+/* Centering Main Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    max-width: 400px; /* Limits width */
+    width: 90%; /* Makes it responsive */
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    border-radius: 12px;
+    padding: 30px;
+    width: 320px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card h2 {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.card p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+
+#chatbot-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+#chatbot-container {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 350px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 10px;
+    display: none;
+}
+
+.hidden { display: none; }
+
+
+#helpBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    font-size: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+#helpBtn:hover {
+    background: var(--secondary-color);
+}
+
+button {
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background: linear-gradient(to right, #feb47b, #ff7e5f);
+    transform: scale(1.05);
+}
+/* button {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: var(--hover-color);
+} */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .card {
+        width: 90%;
+    }
+    .video-container, .text-container {
+        width: 90%;
+    }
+}
+
+
+/* Video & Text Containers */
+.video-container, .text-container {
+    text-align: center;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    width: 50%;
+    max-width: 600px;
+    margin: 20px auto;
+    overflow: hidden;
+} 
+
+.video-container img {
+    width: 100%;
+    /* max-height: 400px; */
+    height:100%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.video-container video {
+    width: 100%;
+    max-height: 200px; /* Adjust height to avoid elongation */
+    border-radius: 10px;
+}
+
+/* Glow effect when sign is detected */
+.video-container.detecting {
+    border-color: limegreen;
+    box-shadow: 0px 4px 20px rgba(50, 205, 50, 0.5);
+} */
+
+
+.text-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    max-width: 500px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 3px solid black;
+}
+
+#feedback button {
+    font-size: 24px;
+    margin: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+#thumbsUp { color: green; }
+#thumbsDown { color: red; }
+
+
+/* Animated text update */
+#recognized_text {
+    font-size: 17px;
+    font-weight: bold;
+    color: #555; /* Optional: Make text slightly dimmer */
+    transition: all 0.3s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#speakBtn {
+    margin-top: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#speakBtn:hover {
+    background: var(--hover-color);
+}
+
+
+.text-container p {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--secondary-color);
+}
+
+
+
+.loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid var(--primary-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* theme */
+/* Positioning the Theme Toggle Button */
+#theme-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+/* Hover Effect */
+#theme-toggle:hover {
+    background-color: #388E3C;
+}
+
+.dark-mode {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+/* Light Blue to Gray Gradient for .container in Dark Mode */
+body.dark-mode .container {
+    background: linear-gradient(135deg, #899ba7, #505965); /* Light blue to gray gradient */
+    color: #000; /* Ensures text remains dark for readability */
+    border-radius: 12px;  /* Rounded corners for better appearance */
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2); /* Softer shadow effect */
+}
+
+/* Turn only the FIRST <h2> in .container to white */
+.dark-mode .container > h2 {
+    color: black !important;
+}
+
+/* Turn text inside .text-container to white */
+.dark-mode .text-container {
+    color: black !important;
+}
+
+.dark-mode .video-container {
+    color: black !important;
+}
+
+.dark-mode nav {
+    background: #333;
+}
+
+.dark-mode .card {
+    background: #2d2d2d;
+    color: #fff;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode button {
+    background: #0077b6;
+}
+
+.dark-mode button:hover {
+    background: #0096c7;
+}
+
+
+#chat-support {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: 0.3s ease;
+}
+
+#chat-support:hover {
+    background: var(--hover-color);
+    transform: scale(1.1);
+}
+
+/* Input Field */
+input[type="text"] {
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    outline: none;
+    margin: 10px 0;
+    text-align: center;
+}
+
+
+/* Video Container */
+.video-container {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin: 15px 0;
+}
+
+#signVideo {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* Progress Bar */
+#progressContainer {
+    width: 80%;
+    background: #ddd;
+    border-radius: 5px;
+    height: 8px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+#progressBar {
+    width: 0%;
+    height: 100%;
+    background: var(--primary-color);
+    transition: width 0.5s ease-in-out;
+}
+
+.note {
+    background-color: #fff3cd;  /* Light yellow for warning look */
+    color: #856404;             /* Dark yellow text */
+    border: 1px solid #ffeeba;  /* Soft border */
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Slight shadow for depth */
+}
+
+.note {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    input[type="text"], .video-container, button {
+        width: 100%;
+    }
+}
+
+
+/* ensure it works on mobile */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .video-container, .text-container {
+        width: 100%;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+
+
+/* gesture navigation css */
+#gesture-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+#gesture-toggle:hover {
+    background-color: #0056b3;
+}
+
+video {
+    width: 100%;
+    max-width: 640px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+canvas {
+    display: none;
+}

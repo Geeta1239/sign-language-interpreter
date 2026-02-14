@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Interpreter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='gesture_script.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+<!-- BotUI Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css">
+
+<!-- Vue.js (required by BotUI) -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+
+<!-- BotUI Script -->
+<script src="https://cdn.jsdelivr.net/npm/botui/build/botui.min.js"></script>
+
+</head>
+
+<body>
+    <!-- Theme Toggle Button -->
+     <button id="gesture-toggle">Enable Gestures</button>
+    <button id="theme-toggle">🌙 Toggle Theme</button>
+   
+<!-- Chatbot Toggle Button -->
+<button id="chatbot-btn">💬 Chat with AI</button>
+
+<!-- Floating Chatbot Window -->
+<div id="chatbot-container" class="hidden">
+  <div id="chatbot-header">
+    <span>Bot Assistant</span>
+    <button id="close-chatbot">✖</button>
+  </div>
+  <div id="botui-app">
+    <bot-ui></bot-ui>
+  </div>
+</div>
+
+    
+    <nav>
+        <h1>Sign Language Interpreter</h1>
+    </nav>
+
+    <div class="container">
+        <h2>Welcome, <span id="username">User</span> 👋</h2>
+        
+        <div class="card" onclick="window.location.href='{{ url_for('sign_to_text') }}'">
+            <h2>Sign Language to Text/Speech</h2>
+            <p>Use your camera to convert sign language into text or speech.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='{{ url_for('text_to_sign') }}'">
+            <h2>Text/Speech to AI Avatar</h2>
+            <p>Enter text or speak, and an AI avatar will perform sign language.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='{{ url_for('gesture_navigation') }}'">
+            <h2>Gesture Navigation</h2>
+            <p>Swipe left or right to navigate pages.</p>
+        </div>
+
+        <!-- Register Word/Character Section -->
+        <div class="register-section">
+            <h3>Register a Word/Character</h3>
+            <input type="text" id="word-input" placeholder="Enter word/char" />
+            <button onclick="registerWord()">Register</button>
+        </div>
+
+    </div>
+
+    <script>
+        function registerWord() {
+            const word = document.getElementById("word-input").value.trim();
+            if (!word) {
+                alert("Please enter a word or character.");
+                return;
+            }
+
+            fetch('/register_word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error:', error));
+        }
+
+     
+    
+       
+        document.addEventListener("DOMContentLoaded", function () {
+    const chatbotBtn = document.getElementById("chatbot-btn");
+    const chatbotContainer = document.getElementById("chatbot-container");
+    const closeBtn = document.getElementById("close-chatbot");
+
+    let botui = null;
+    let initialized = false;
+
+    chatbotBtn.addEventListener("click", function () {
+        chatbotContainer.style.display = "flex";
+        if (!initialized) {
+            botui = new BotUI('botui-app');
+            initialized = true;
+            startBot();
+        }
+    });
+
+    closeBtn.addEventListener("click", function () {
+        chatbotContainer.style.display = "none";
+    });
+
+    function startBot() {
+        botui.message.add({
+            content: '👋 Hi! Ask me anything about sign language or this app.'
+        }).then(promptUser);
+    }
+
+    function promptUser() {
+        botui.action.text({
+            action: {
+                placeholder: 'Ask me something...'
+            }
+        }).then(function (res) {
+            const userInput = res.value.toLowerCase();
+
+            let reply = "🤖 Hmm, I don't know that yet. Try asking about sign language.";
+
+            if (userInput.includes("sign language interpreter")) {
+                reply = "🧠 A sign language interpreter translates between spoken language and sign language to help bridge communication gaps.";
+            } else if (userInput.includes("sign to text")) {
+                reply = "✋ Sign to Text means converting your hand signs from the webcam into readable text using AI.";
+            } else if (userInput.includes("text to sign")) {
+                reply = "🗣️ Text to Sign converts your input into animated sign language gestures using an AI avatar.";
+            } else if (userInput.includes("register")) {
+                reply = "📌 You can register new words or characters by entering them and clicking the register button!";
+            }
+
+            botui.message.add({ content: reply }).then(promptUser);
+        });
+    }
+});
+
+    </script>
+</body>
+</html>

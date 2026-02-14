@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Navigation Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='gesture_script.js') }}" defer></script>
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            color: #333;
+        }
+
+        nav {
+            background: #023e8a;
+            padding: 15px;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .info-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 800px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .info-container h3 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #023e8a;
+        }
+
+        .info-container p, .info-container ul {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* Gesture Container */
+        .gesture-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .gesture-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        .gesture-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gesture-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .gesture-card h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .gesture-card p {
+            font-size: 14px;
+            color: gray;
+            font-weight: 500;
+        }
+
+        /* Gesture Toggle Button */
+        button#gesture-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background:#023e8a;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+        }
+
+        button#gesture-toggle:hover {
+            transform: scale(1.1);
+            background: #0056b3;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}" class="back">Back</a>
+    </nav>
+
+    <div>
+        <!-- First Info Section -->
+        <div class="info-container">
+            <h3>👋 How to Use Gesture Navigation</h3>
+            <p>Use hand gestures to navigate your sign language interpreter website seamlessly.</p>
+            <p>Ensure your hand is **fully visible** in front of the camera for accurate recognition.</p>
+        </div>
+
+
+        <!-- Second Info Section -->
+        <div class="info-container">
+            <h3>⚡ Tips for Best Accuracy</h3>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Use gestures in a **well-lit** environment.</li>
+                <li>Keep your hand at a **consistent distance** from the camera.</li>
+                <li>Hold the gesture for **1 second** to trigger an action.</li>
+                <li>Ensure **no other objects** are interfering with hand detection.</li>
+            </ul>
+        </div>
+
+
+    </div>
+
+    <div>
+        <!-- Gesture Cards Section -->
+        <div class="gesture-container">
+            <div class="gesture-card">
+                <img src="{{ url_for('static', filename='images/open_palm.png') }}" alt="Open Palm">
+                <h3>Open Palm</h3>
+                <p>Navigate to **Sign to Text/Speech** page.</p>
+            </div>
+
+            <div class="gesture-card">
+                <img src="{{ url_for('static', filename='images/point_up.png') }}" alt="Point Up">
+                <h3>Point Up</h3>
+                <p>Navigate to **Text to AI Avatar** page.</p>
+            </div>
+
+            <br>
+
+            <div class="gesture-card">
+                <img src="{{ url_for('static', filename='images/point_right.png') }}" alt="Point Right">
+                <h3>Point Right</h3>
+                <p>Navigate to **Gesture Navigation Settings** page.</p>
+            </div>
+
+            <div class="gesture-card">
+                <img src="{{ url_for('static', filename='images/closed_fist.png') }}" alt="Closed Fist">
+                <h3>Closed Fist</h3>
+                <p>Disable gesture recognition.</p>
+            </div>
+        </div>
+        
+    </div>
+
+
+
+    <!-- Gesture Toggle Button -->
+    <button id="gesture-toggle">Enable Gestures</button>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Sign Language</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='gesture_script.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Convert Text to Sign Language</h2>
+
+        <div class="note">
+            <p>📝 <b>Note:</b> To separate words, must use underscores.</p>
+        </div>
+        
+        <input type="text" id="textInput" placeholder="Enter text...">
+        <button onclick="startSpeechRecognition()">🎤 Speak</button>
+
+        <div class="video-container">
+            <video id="signVideo" controls></video>
+        </div>
+
+        <button onclick="convertToSign()">Generate</button>
+
+        <div id="progressContainer">
+            <div id="progressBar"></div>
+        </div>
+
+        <button id="shareBtn" onclick="shareVideo()">Share</button>
+    </div>
+
+    <button id="gesture-toggle">Enable Gestures</button>
+
+</body>
+
+
+    <script>
+
+    function startSpeechRecognition() {
+        let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.start();
+        recognition.onresult = (event) => {
+            document.getElementById("textInput").value = event.results[0][0].transcript;
+        };
+    }
+    
+    function convertToSign() {
+        let text = document.getElementById("textInput").value.trim();
+
+        if (!text) {
+            alert("Please enter text to generate a sign language video.");
+            return;
+        }
+
+        // Show and reset the progress bar
+        let progressBar = document.getElementById("progressBar");
+        progressBar.style.width = "0%";
+        document.getElementById("progressContainer").style.display = "block";
+
+        let progress = 0;
+        let progressInterval = setInterval(() => {
+            if (progress < 90) { 
+                progress += 10;
+                progressBar.style.width = progress + "%";
+            }
+        }, 500);
+
+        console.log("Sending text:", text);  // 🔍 Debugging
+
+        fetch("http://127.0.0.1:5000/text_to_sign", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: text })
+        })
+        .then(response => {
+            clearInterval(progressInterval);  // Stop progress bar once request completes
+            progressBar.style.width = "100%"; // Set to full on success
+            
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error || "Failed to get video"); });
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            let videoUrl = URL.createObjectURL(blob);
+            document.getElementById("signVideo").src = videoUrl;
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            progressBar.style.width = "0%";  // Reset on error
+            console.error("Error:", error);
+            alert("❌ Error: " + error.message);
+        });
+    }
+
+    function shareVideo() {
+        let videoElement = document.getElementById("signVideo");
+
+        if (!videoElement.src || videoElement.src === window.location.href) {
+            alert("⚠️ No video available to share. Please generate a video first.");
+            return;
+        }
+
+        // Create a download link
+        let downloadLink = document.createElement("a");
+        downloadLink.href = videoElement.src;
+        downloadLink.download = "sign_language_video.mp4"; 
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // ✅ Optional: Use Web Share API (for mobile users)
+        if (navigator.share) {
+            navigator.share({
+                title: "Sign Language Video",
+                text: "Check out this sign language video!",
+                url: videoElement.src
+            }).then(() => {
+                console.log("✅ Video shared successfully!");
+            }).catch((error) => {
+                console.error("⚠️ Error sharing:", error);
+            });
+        } else {
+            alert("📋 Video link copied! You can manually share it.");
+            navigator.clipboard.writeText(videoElement.src);
+        }
+    }
+
+
+</script>
+
+</body>
+
+</html>

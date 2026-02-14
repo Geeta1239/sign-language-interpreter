@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign to Text/Speech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='gesture_script.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+
+
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin: 20px auto;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .text-container{
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h1>Sign Language to Text/Speech</h1>
+        <br>
+        <a href="{{ url_for('dashboard') }}" class="back">Back</a>
+    </nav>
+
+    <div class="container">
+        <div class="video-container">
+            <h2>Live Camera</h2>
+            <img id="video_feed" src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+
+        <div class="text-container">
+            <h2>Recognized Text</h2>
+            <p id="recognized_text">Waiting for signs...</p>
+
+            <!-- Second row of buttons -->
+            <div class="button-container">
+                <button onclick="clearText()">Clear Text</button>
+                <button id="speakBtn2">🔊 Speak</button>
+            </div>
+
+            <div id="feedback" class="button-container">
+                <button id="thumbsUp">👍</button>
+                <button id="thumbsDown">👎</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="gesture-toggle">Enable Gestures</button>
+
+    <script>
+       function clearText() {
+            document.getElementById("recognized_text").innerText = "Waiting for signs...";
+            fetch('/clear_text', { method: 'POST' });
+        }
+
+        function updateText() {
+            fetch('/get_text')
+                .then(response => {
+                    if (!response.ok) {
+                        console.error("❌ Server responded with:", response.status);
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    console.log("📢 Received text from backend:", text); // Debugging
+                    let textElement = document.getElementById('recognized_text');
+                    if (textElement) {
+                        if (text.startsWith("<!DOCTYPE html>")) {  // ❌ Detect if response is HTML (error case)
+                            console.error("⚠️ Error: Received HTML instead of plain text!");
+                            textElement.innerText = "Error fetching text!";
+                        } else {
+                            textElement.innerText = text.trim() || "Waiting for signs...";
+                        }
+                    } else {
+                        console.error("❌ Element with ID 'recognized_text' not found!");
+                    }
+                })
+                .catch(error => console.error('⚠️ Error fetching text:', error));
+        }
+
+        setInterval(updateText, 3000); // Update every 3 seconds
+
+        function speakText() {
+            let text = document.getElementById("recognized_text").innerText;
+            let speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        }
+
+        document.getElementById("speakBtn2").addEventListener("click", speakText);
+
+        document.getElementById("thumbsUp").addEventListener("click", function() {
+            alert("Thank you for the feedback! 👍");
+        });
+
+        document.getElementById("thumbsDown").addEventListener("click", function() {
+            alert("We'll improve our recognition! 👎");
+        });
+
+         window.addEventListener('beforeunload', () => {
+        const img = document.getElementById('video_feed');
+        if (img) {
+            img.src = '';
+        }
+    });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+sign-language-interpreter/
+│── backend/
+│   │── train_model.py               # Python script to train the sign language model using landmarks
+│   │── predict.py                    # Python script to process real-time sign recognition
+│   │── ai_avatar.py                   # Python script to generate AI avatar sign language video
+│   └── utils.py                      # Helper functions for data processing
+│
+│── database/
+│   │── db_connection.php             # PHP script for MySQL database connection
+│   │── save_user.php                  # PHP script to store user data in MySQL
+│   │── authenticate.php               # PHP script for user login authentication
+│
+│── frontend/
+│   │── index.html                    # Main login page
+│   │── dashboard.html                 # Main interface with two cards
+│   │── styles.css                     # CSS file for UI design
+│   │── scripts.js                     # JavaScript for handling UI interactions
+│
+│── media/
+│   │── avatars/                       # AI-generated sign language avatar videos
+│   │── user_videos/                   # Recorded user videos
+│
+│── assets/
+│   │── images/                        # UI images/icons
+│   │── fonts/                         # Custom fonts
+│
+│── server/
+│   │── video_processing.php            # PHP script to handle video uploads
+│   │── generate_avatar.php             # PHP script to process AI avatar generation
+│
+│── static/
+│   │── styles.css           # PHP script to handle video uploads
+│   │── script.js
+|
+│── README.md                           # Documentation
+│── requirements.txt                     # Python dependencies
+│── config.php                           # Global PHP configurations

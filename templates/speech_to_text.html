@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+</head>
+
+<body>
+    <h2>Record Speech</h2>
+    <button onclick="startRecording()">Start Recording</button>
+    <p id="output"></p>
+
+    <script>
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    const mediaRecorder = new MediaRecorder(stream);
+                    let audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                        let formData = new FormData();
+                        formData.append("audio", audioBlob, "recorded_audio.wav");
+
+                        fetch("../backend/speech_to_text.py", {
+                            method: "POST",
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => document.getElementById("output").innerText = data.text)
+                            .catch(error => console.error("Error:", error));
+                    };
+
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 5000);
+                })
+                .catch(error => console.error("Error accessing microphone:", error));
+        }
+    </script>
+</body>
+
+</html>

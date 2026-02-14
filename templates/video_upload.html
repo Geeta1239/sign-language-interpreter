@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Sign Language Video</title>
+</head>
+
+<body>
+    <h2>Upload Sign Language Video</h2>
+    <input type="file" id="videoInput">
+    <button onclick="uploadVideo()">Upload</button>
+
+    <script>
+        function uploadVideo() {
+            let fileInput = document.getElementById("videoInput").files[0];
+            let formData = new FormData();
+            formData.append("video", fileInput);
+
+            fetch("../server/video_processing.php", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+
+</html>
